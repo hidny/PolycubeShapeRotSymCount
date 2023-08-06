@@ -14,13 +14,15 @@ import PartOfRotSymmetric2DLattice.QuarterAxisAtMid00;
 import PartOfRotSymmetric2DLattice.RotationallySymmetric2DLatticeInterface;
 
 public class Num2DSolutionsPerLattice {
+	
+	//TODO: read https://arxiv.org/pdf/cond-mat/0007239.pdf to understand how n=56 is even achievable.
 
 	//TODO: Count the number of rotationally sym answers as n increases!
 	
 	public static void main(String args[]) {
 		
 		long total = 0L;
-		for(int i=0; i<50; i++) {
+		/*for(int i=0; i<10; i++) {
 			System.out.println("Search for weight " + i);
 			long ret = solveForN(i);
 			
@@ -28,7 +30,9 @@ public class Num2DSolutionsPerLattice {
 			System.out.println();
 			
 			total += ret;
-		}
+		}*/
+		
+		total += solveForN(56);
 		
 		System.out.println("Total: " + total);
 		//solveForN(4);
@@ -61,10 +65,10 @@ public class Num2DSolutionsPerLattice {
 
 		//ret += getNumSymmetriesForLattice(n, lattices[2]);; // N =1 gives 1 solution
 		
-		//ret += getNumSymmetriesForLattice(n, lattices[3]);//N=4 gives 1 solution
+		ret += getNumSymmetriesForLattice(n, lattices[3]);//N=4 gives 1 solution
 		
 		//TODO: found no solutions, so I probably messed it up...
-		ret += getNumSymmetriesForLattice(n, lattices[4]);//N=1 gives 1 solution
+		//ret += getNumSymmetriesForLattice(n, lattices[4]);//N=1 gives 1 solution
 		
 		System.out.println("Ret: " + ret);
 		
@@ -98,7 +102,7 @@ public class Num2DSolutionsPerLattice {
 			startI = coord[0];
 			startJ = coord[1];
 			
-			//System.out.println(startI + ", " + startJ);
+			System.out.println("Using this startI and startJ coord: " + startI + ", " + startJ);
 		}
 		
 		return ret;
@@ -265,10 +269,13 @@ public class Num2DSolutionsPerLattice {
 		} else if(currentWeight == targetWeight) {
 			
 			if(isConnected(coordsUsedWithRotSymmetry, squaresToDevelop[0].a, squaresToDevelop[0].b, targetWeight, CENTER_ARRAY)) {
-				
-				System.out.println("Solution:");
-				Utils.Utils.printSquares(coordsUsedWithRotSymmetry);
+
 				numSolutionsSoFarDebug++;
+				
+				if(numSolutionsSoFarDebug % 100000 == 0) {
+					System.out.println("Solution " + numSolutionsSoFarDebug + ":");
+					Utils.Utils.printSquares(coordsUsedWithRotSymmetry);
+				}
 				return 1L;
 			} else {
 				return 0L;
