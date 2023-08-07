@@ -19,36 +19,58 @@ public class Num2DSolutionsPerLattice {
 
 	//TODO: Count the number of rotationally sym answers as n increases!
 	
+	// Numbers I got from https://oeis.org/A001931
+	// I added a 1 at the beginning, because I decided there's 1 way to do it with 0 cubes.
+	public static final long numFixed3DPolycubes[] = 
+		{1, 1, 2, 6, 19, 63, 216, 760, 2725, 9910, 36446, 135268, 505861, 1903890, 7204874, 27394666, 104592937, 400795844, 1540820542, 5940738676L, 22964779660L, 88983512783L, 345532572678L, 1344372335524L, 5239988770268L, 20457802016011L, 79992676367108L, 313224032098244L, 1228088671826973L};
+	
 	public static void main(String args[]) {
 		
+		int MAX_N = 7;
+		
+		long series[] = new long[MAX_N + 1];
+		
 		long total = 0L;
-		/*for(int i=0; i<10; i++) {
+		for(int i=7; i<=MAX_N; i++) {
 			System.out.println("Search for weight " + i);
 			long ret = solveForN(i);
 			
 			System.out.println("Answer for weight " + i + ": " + ret);
 			System.out.println();
 			
+			series[i] = ret;
+			
 			total += ret;
-		}*/
+		}
 		
-		total += solveForN(56);
+		//total += solveForN(56);
 		
 		System.out.println("Total: " + total);
+		
+		System.out.println("Printing series obtained:");
+
+		for(int i=0; i<=MAX_N; i++) {
+			System.out.println(i + ": " + series[i]);
+		}
 		//solveForN(4);
 	}
 	
-	public static int PADDING_FACTOR = 10;
+	public static final int PADDING_FACTOR = 10;
 	
-	public static int NUM_2D_LATTICE_CASES = 5;
+	public static final int NUM_2D_LATTICE_CASES = 5;
 	
 	public static final int NUM_2D_NEIGHBOURS = 4;
 	
 	public static final int NOT_APPLICABLE = -2;
 	
 	public static long solveForN(int n) {
-		RotationallySymmetric2DLatticeInterface lattices[] = new RotationallySymmetric2DLatticeInterface[NUM_2D_LATTICE_CASES];
 
+		if(n == 0) {
+			return 1L;
+		}
+		
+		RotationallySymmetric2DLatticeInterface lattices[] = new RotationallySymmetric2DLatticeInterface[NUM_2D_LATTICE_CASES];
+		
 		//TOOD: Put this in a factory class.
 		lattices[0] = new BasicHalf();
 		lattices[1] = new HalfAxisAtLeft00();
@@ -56,19 +78,63 @@ public class Num2DSolutionsPerLattice {
 		lattices[3] = new BasicQuarter();
 		lattices[4] = new QuarterAxisAtMid00();
 		
-		
-		long ret = 0L;
-		
-		//ret += getNumSymmetriesForLattice(n, lattices[0]); // N =2 gives 1 solution
-		
-		//ret += getNumSymmetriesForLattice(n, lattices[1]); // N =2 gives 1 solution
 
-		//ret += getNumSymmetriesForLattice(n, lattices[2]);; // N =1 gives 1 solution
+		long numSolutionsWith90Rot = 0L;
+		long numSolutionsWith180Rot = 0L;
+
+		//--------
 		
-		ret += getNumSymmetriesForLattice(n, lattices[3]);//N=4 gives 1 solution
+		long halfAxisAtTopLeft00 = getNumSymmetriesForLattice(n, lattices[0]); // N =2 gives 1 solution
+		long BasicQuarter = getNumSymmetriesForLattice(n, lattices[3]);//N=4 gives 1 solution
 		
-		//TODO: found no solutions, so I probably messed it up...
-		//ret += getNumSymmetriesForLattice(n, lattices[4]);//N=1 gives 1 solution
+		
+		long tmp = halfAxisAtTopLeft00 + BasicQuarter;
+		
+		if(tmp % 2 != 0) {
+			System.out.println("OOPS!");
+			System.exit(1);
+		}
+		
+		numSolutionsWith180Rot = (tmp) / 2;
+		
+		numSolutionsWith90Rot += BasicQuarter;
+
+
+		//--------
+		
+		long halfAxisAtMid00 = getNumSymmetriesForLattice(n, lattices[2]); // N =1 gives 1 solution
+		
+		long quarterAxisAtMid00 = getNumSymmetriesForLattice(n, lattices[4]);
+		
+		tmp = halfAxisAtMid00 + quarterAxisAtMid00;
+		
+		System.out.println(tmp);
+		System.out.println(quarterAxisAtMid00);
+		if(tmp % 2 != 0) {
+			System.out.println("OOPS 2!");
+			System.exit(1);
+		}
+
+		numSolutionsWith180Rot = (tmp) / 2;
+		
+		numSolutionsWith90Rot += quarterAxisAtMid00;
+		
+		//--------
+
+		numSolutionsWith180Rot += getNumSymmetriesForLattice(n, lattices[1]); // N =2 gives 1 solution
+
+
+		
+		long answerBeforeDiv4 = numFixed3DPolycubes[n] + 2 * numSolutionsWith180Rot + 1 * numSolutionsWith90Rot; 
+	
+		if(answerBeforeDiv4 % 4 != 0) {
+			System.out.println("ERROR: the number of solutions doesn't divide cleanly into 4.");
+		}
+		
+		System.out.println("numSolutionsWith180Rot: " + numSolutionsWith180Rot);
+		System.out.println("numSolutionsWith90Rot: " + numSolutionsWith90Rot);
+		
+		long ret = answerBeforeDiv4 / 4;
 		
 		System.out.println("Ret: " + ret);
 		
@@ -92,7 +158,7 @@ public class Num2DSolutionsPerLattice {
 		int CENTER = disallowedCoords.length /2;
 		
 		//TODO: I don't know what the limit should be. (n/2 seems ok for now)
-		while(startI < n/2) {
+		while(startI < (n+1)/2) {
 			
 			ret += countFor2DLattice(n, lattice, disallowedCoords, startI, startJ);
 				
@@ -102,7 +168,7 @@ public class Num2DSolutionsPerLattice {
 			startI = coord[0];
 			startJ = coord[1];
 			
-			System.out.println("Using this startI and startJ coord: " + startI + ", " + startJ);
+			//System.out.println("Using this startI and startJ coord: " + startI + ", " + startJ);
 		}
 		
 		return ret;
@@ -268,9 +334,13 @@ public class Num2DSolutionsPerLattice {
 			return 0L;
 		} else if(currentWeight == targetWeight) {
 			
-			if(isConnected(coordsUsedWithRotSymmetry, squaresToDevelop[0].a, squaresToDevelop[0].b, targetWeight, CENTER_ARRAY)) {
+			if(isConnected(coordsUsedWithRotSymmetry, squaresToDevelop[0].a, squaresToDevelop[0].b, targetWeight, CENTER_ARRAY)
+				&& lattice.isSolutionAcceptableAndNotDoubleCounting(squaresToDevelop)) {
 
 				numSolutionsSoFarDebug++;
+
+				System.out.println("hello");
+				Utils.Utils.printSquares(coordsUsedWithRotSymmetry);
 				
 				if(numSolutionsSoFarDebug % 100000 == 0) {
 					System.out.println("Solution " + numSolutionsSoFarDebug + ":");
@@ -374,7 +444,7 @@ public class Num2DSolutionsPerLattice {
 					
 					tmpArray = lattice.getRotationallySymmetricPoints(tmpArray, new_i, new_j);
 					
-					for(int i=0; i<tmpArray[0].length; i++) {
+					for(int i=0; i<weightOfPoint; i++) {
 						coordsUsedWithRotSymmetry[CENTER_ARRAY + tmpArray[0][i]][CENTER_ARRAY + tmpArray[1][i]] = false;
 					}
 					currentWeight -= weightOfPoint;

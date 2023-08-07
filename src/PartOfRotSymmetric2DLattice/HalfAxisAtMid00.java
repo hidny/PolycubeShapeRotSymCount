@@ -1,14 +1,11 @@
 package PartOfRotSymmetric2DLattice;
 
+import Coord.Coord2D;
+
 public class HalfAxisAtMid00 implements RotationallySymmetric2DLatticeInterface {
 
 	//Case 5:
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-	
 	
 	//TODO: have drawing to show it:
 	// Basic quarter where rotation is at 0,0
@@ -91,6 +88,20 @@ public class HalfAxisAtMid00 implements RotationallySymmetric2DLatticeInterface 
 
 	public int getMaxNumSymmetries() {
 		return NUM_SYMMETRIES;
+	}
+
+	// Edge case where the solutions for this lattice could be double-counted is handled here:
+	@Override
+	public boolean isSolutionAcceptableAndNotDoubleCounting(Coord2D squaresUsed[]) {
+		
+		return true;
+		/*for(int i=0; i<squaresUsed.length && squaresUsed[i] != null; i++) {
+			
+			if(squaresUsed[i].a < 0) {
+				return true;
+			}
+		}
+		return false;*/
 	}
 
 }

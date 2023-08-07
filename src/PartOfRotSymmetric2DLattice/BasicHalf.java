@@ -1,5 +1,7 @@
 package PartOfRotSymmetric2DLattice;
 
+import Coord.Coord2D;
+
 public class BasicHalf implements RotationallySymmetric2DLatticeInterface {
 
 	//Case 4:
@@ -47,6 +49,8 @@ public class BasicHalf implements RotationallySymmetric2DLatticeInterface {
 		ret[0][1] = - i + 1;
 		ret[1][1] = - j - 1;
 		
+		
+		
 		return ret;
 	}
 
@@ -56,5 +60,10 @@ public class BasicHalf implements RotationallySymmetric2DLatticeInterface {
 
 	public int getMaxNumSymmetries() {
 		return NUM_SYMMETRIES;
+	}
+
+	@Override
+	public boolean isSolutionAcceptableAndNotDoubleCounting(Coord2D squaresUsed[]) {
+		return true;
 	}
 }

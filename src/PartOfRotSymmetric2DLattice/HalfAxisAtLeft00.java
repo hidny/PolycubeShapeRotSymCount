@@ -1,5 +1,7 @@
 package PartOfRotSymmetric2DLattice;
 
+import Coord.Coord2D;
+
 public class HalfAxisAtLeft00 implements RotationallySymmetric2DLatticeInterface {
 
 	//Case 3:
@@ -58,5 +60,11 @@ public class HalfAxisAtLeft00 implements RotationallySymmetric2DLatticeInterface
 
 	public int getMaxNumSymmetries() {
 		return NUM_SYMMETRIES;
+	}
+
+	//TODO: fix this somehow!
+	@Override
+	public boolean isSolutionAcceptableAndNotDoubleCounting(Coord2D squaresUsed[]) {
+		return true;
 	}
 }
