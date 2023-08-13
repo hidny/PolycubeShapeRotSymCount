@@ -1,6 +1,5 @@
 package Num2DSolutionsPerLatticeOLD;
 
-import java.awt.peer.SystemTrayPeer;
 import java.util.LinkedList;
 
 import Coord.Coord2D;

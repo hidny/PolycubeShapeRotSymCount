@@ -41,7 +41,7 @@ public class Num2DSolutionsPerLattice2 {
 		//testSolve();
 	}
 	
-	public static int DEBUG_TEST_N = 7;
+	public static int DEBUG_TEST_N = 20;
 
 	public static void testSolve() {
 		RotationallySymmetric2DLatticeInterface lattices[] = new RotationallySymmetric2DLatticeInterface[NUM_2D_LATTICE_CASES];
@@ -71,6 +71,26 @@ public class Num2DSolutionsPerLattice2 {
 1, 1, 1, 2, 5, 12, 35, 108, 369, 1285, 4655, 17073, 63600, 238591, 901971, 3426576, 13079255, 50107909, 192622052, 742624232, 2870671950, 11123060678, 43191857688, 168047007728, 654999700403, 2557227044764, 9999088822075, 39153010938487, 153511100594603
 
 	 */
+	
+	/* Debug N=16
+	 * Sanity check results:
+	 * Debugging 2D rotations:
+Number of rotations by type:
+Type 0: 2685
+Type 1: 13520
+Type 2: 472
+Type 3: 19
+Type 4: 10
+
+Lattice2 results:
+Solutions for (Half with axis at top left of 00): 2685
+Solutions for (Half with axis at left of 00): 6760  (x2 because this doesn't also count top of 00)
+Solutions for (Half with axis at mid of 00): 472
+Solutions for (Quarter with axis at top-left of 00): 19
+Solutions for (Quarter with axis at mid of 00): 9
+
+Looks like I missed 1 for Quarter with axis at mid of 00...
+	 */
 
 	public static void firstFewNValuesTest() {
 
@@ -79,7 +99,7 @@ public class Num2DSolutionsPerLattice2 {
 		long series[] = new long[MAX_N + 1];
 		
 		long total = 0L;
-		for(int i=0; i<=MAX_N; i++) {
+		for(int i=MAX_N; i<=MAX_N; i++) {
 			System.out.println("Search for weight " + i);
 			long ret = solveForN(i);
 			
@@ -99,6 +119,10 @@ public class Num2DSolutionsPerLattice2 {
 
 		for(int i=0; i<=MAX_N; i++) {
 			System.out.println(i + ": " + series[i] + " (expected: " + expected[i] + ")");
+			
+			if(series[i] != expected[i]) {
+				System.out.println("********* TEST FAIL **********");
+			}
 		}
 		//solveForN(4);
 	}
@@ -176,22 +200,29 @@ public class Num2DSolutionsPerLattice2 {
 		
 		boolean disallowedTransitions[][][] = Utils.getDisallowed2DTransitionsBecauseItIsRedundant(lattice, disallowedCoords.length);
 		
+		
 		//TODO: I don't know what the limit should be. (n/2 seems ok for now)
 		while(startI < (n+1)/2) {
-			
-			ret += countFor2DLattice(n, lattice, disallowedCoords, disallowedTransitions, startI, startJ);
-				
-			int coords[][] = lattice.getRotationallySymmetricPoints(tmpArray, startI, startJ);
-			
-			for(int k=0; k<lattice.getWeightOfPoint(startI, startJ); k++) {
-				disallowedCoords[coords[0][k] + CENTER][coords[1][k] + CENTER] = true;
-			}
 
-			int coord[] = TopHalfIterator.getNext(startI, startJ);
-			startI = coord[0];
-			startJ = coord[1];
-			
 			//System.out.println("Using this startI and startJ coord: " + startI + ", " + startJ);
+			ret += countFor2DLattice(n, lattice, disallowedCoords, disallowedTransitions, startI, startJ);
+
+			int coordsToDisallow[][] = null;
+			coordsToDisallow = lattice.getRotationallySymmetricPoints(tmpArray, startI, startJ);
+
+			for(int k=0; k<lattice.getWeightOfPoint(startI, startJ); k++) {
+				disallowedCoords[coordsToDisallow[0][k] + CENTER][coordsToDisallow[1][k] + CENTER] = true;
+			}
+			
+			do {
+				int coord[] = TopHalfIterator.getNext(startI, startJ);
+				startI = coord[0];
+				startJ = coord[1];
+			
+			} while( ! lattice.isPartOfLattice(startI, startJ));
+			
+
+			
 		}
 		
 		return ret;
@@ -203,6 +234,19 @@ public class Num2DSolutionsPerLattice2 {
 		
 		if( ! lattice.isPartOfLattice(startI, startJ)) {
 			return 0L;
+		}
+		
+		/*if(lattice.toString().contains("with axis at mid of 00")
+				&& lattice.toString().contains("Quarter")
+				&& disallowedCoords[CENTER][CENTER]
+				&& disallowedCoords[CENTER + 1][CENTER]
+						) {
+			System.out.println("DEBUG");
+		}*/
+		
+		if(disallowedCoords[CENTER + startI][CENTER + startJ]) {
+			System.out.println("ERROR: startI and startJ are on a disallowed coordinate!");
+			System.exit(1);
 		}
 		
 		boolean coordsUsedWithRotSymmetry[][] = new boolean[disallowedCoords.length][disallowedCoords.length];
