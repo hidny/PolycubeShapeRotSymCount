@@ -1,6 +1,12 @@
 package Utils;
 
 import Coord.Coord3D;
+import PartOfRotSymmetric2DLattice.HalfAxisTopLeft00;
+import PartOfRotSymmetric2DLattice.QuarterAxisTopLeft00;
+import PartOfRotSymmetric2DLattice.HalfAxisAtLeft00;
+import PartOfRotSymmetric2DLattice.HalfAxisAtMid00;
+import PartOfRotSymmetric2DLattice.QuarterAxisAtMid00;
+import PartOfRotSymmetric2DLattice.RotationallySymmetric2DLatticeInterface;
 
 public class Utils {
 
@@ -165,4 +171,107 @@ public class Utils {
 		
 	}
 	
+	
+	public static int NUM_2D_NEIGHBOURDS = 4;
+	
+	public static final int nudgeBasedOnRotation2D[][] =
+		{{-1, 0,  1,  0},
+		 {0,  1,  0, -1}};
+	
+	
+	
+	//TODO: move to other file?
+	
+	public static boolean[][][] getDisallowed2DTransitionsBecauseItIsRedundant(RotationallySymmetric2DLatticeInterface lattice, int sizeArrayDims) {
+		boolean ret[][][] = new boolean[sizeArrayDims][sizeArrayDims][NUM_2D_NEIGHBOURDS];
+		int CENTER = sizeArrayDims /2;
+		
+		if(sizeArrayDims < 10) {
+			System.out.println("ERROR: size of array for Utils.getDisallowed2DTransitions is too small");
+			System.exit(1);
+		}
+
+		for(int i=0; i<ret.length; i++) {
+			for(int j=0; j<ret[0].length; j++) {
+				for(int k=0; k<ret[0][0].length; k++) {
+					ret[i][j][k] = false;
+				}
+			}
+		}
+		
+		int tmpArray[][] = new int[2][4]; 
+		
+		int PADDING = 3;
+		
+		for(int i=PADDING; i<ret.length - PADDING; i++) {
+			for(int j=PADDING; j<ret[0].length - PADDING; j++) {
+				
+				boolean coordsUsedWithRotSymmetry[][] = new boolean[sizeArrayDims][sizeArrayDims];
+				for(int i2=0; i2<ret.length; i2++) {
+					for(int j2=0; j2<ret[0].length; j2++) {
+						coordsUsedWithRotSymmetry[i][j] = false;
+					}
+				}
+				
+				NEXT_ROTATION:
+				for(int r=0; r<NUM_2D_NEIGHBOURDS; r++) {
+					
+					int newi = i - CENTER + nudgeBasedOnRotation2D[0][r];
+					int newj = j - CENTER + nudgeBasedOnRotation2D[1][r];
+					
+					int weight = lattice.getWeightOfPoint(newi, newj);
+					tmpArray = lattice.getRotationallySymmetricPoints(tmpArray, newi, newj);
+					
+					//System.out.println("debug: " + i + ", " + j + ", " + r + "  (" + lattice + ")");
+					
+					for(int k=0; k<weight; k++) {
+						
+						int tmpi = tmpArray[0][k];
+						int tmpj = tmpArray[1][k];
+						
+						
+						if( ! coordsUsedWithRotSymmetry[tmpi + CENTER][tmpj + CENTER]) {
+							coordsUsedWithRotSymmetry[tmpi + CENTER][tmpj + CENTER] = true;
+						} else {
+							//System.out.println("disallowed transition: " + (i - CENTER) + ", " + (j - CENTER) + ", " + r + "  (" + lattice + ")");
+							ret[i][j][r] = true;
+							continue NEXT_ROTATION;
+						}
+						
+					}
+					
+				}
+			}
+		}
+		
+		
+		return ret;
+	}
+	
+	
+	//TODO: move to constants:
+	public static final int NUM_2D_LATTICE_CASES = 5;
+	public static void main(String args[]) {
+		
+		RotationallySymmetric2DLatticeInterface lattices[] = new RotationallySymmetric2DLatticeInterface[NUM_2D_LATTICE_CASES];
+		
+		//TOOD: Put this in a factory class.
+		
+		//TODO: make these indexes constants.
+		lattices[0] = new HalfAxisTopLeft00();
+		lattices[1] = new HalfAxisAtLeft00();
+		lattices[2] = new HalfAxisAtMid00();
+		lattices[3] = new QuarterAxisTopLeft00();
+		lattices[4] = new QuarterAxisAtMid00();
+		
+		for(int i=0; i<lattices.length; i++) {
+			getDisallowed2DTransitionsBecauseItIsRedundant(lattices[i], 20);
+			System.out.println();
+			System.out.println();
+			System.out.println();
+		}
+		
+		
+		
+	}
 }

@@ -59,21 +59,14 @@ public class HalfAxisAtMid00 implements RotationallySymmetric2DLatticeInterface 
 
 	public int[][] getRotationallySymmetricPoints(int ret[][], int i, int j) {
 
-
+		ret = new int[2][2];
 		ret[0][0] = i;
 		ret[1][0] = j;
 		
 
-		if(i == 0 && j == 0) {
-
-			ret[0][1] = 0;
-			ret[1][1] = 0;
-		} else {
-			
-			ret[0][1] = - i;
-			
-			ret[1][1] = - j;
-		}
+		ret[0][1] = - i;
+		ret[1][1] = - j;
+		
 		
 		return ret;
 	}
@@ -102,6 +95,11 @@ public class HalfAxisAtMid00 implements RotationallySymmetric2DLatticeInterface 
 			}
 		}
 		return false;*/
+	}
+	
+
+	public String toString() {
+		return "Half with axis at mid of 00";
 	}
 
 }

@@ -1,12 +1,12 @@
-package Num2DSolutionsPerLattice;
+package Num2DSolutionsPerLatticeOLD;
 
 import java.awt.peer.SystemTrayPeer;
 import java.util.LinkedList;
 
 import Coord.Coord2D;
 import NumSymmetricCubes2DSolve.TopHalfIterator;
-import PartOfRotSymmetric2DLattice.BasicHalf;
-import PartOfRotSymmetric2DLattice.BasicQuarter;
+import PartOfRotSymmetric2DLattice.HalfAxisTopLeft00;
+import PartOfRotSymmetric2DLattice.QuarterAxisTopLeft00;
 import PartOfRotSymmetric2DLattice.Constants;
 import PartOfRotSymmetric2DLattice.HalfAxisAtLeft00;
 import PartOfRotSymmetric2DLattice.HalfAxisAtMid00;
@@ -55,7 +55,7 @@ public class Num2DSolutionsPerLattice {
 		//solveForN(4);
 	}
 	
-	public static final int PADDING_FACTOR = 10;
+	public static final int PADDING_FACTOR = 4;
 	
 	public static final int NUM_2D_LATTICE_CASES = 5;
 	
@@ -72,10 +72,10 @@ public class Num2DSolutionsPerLattice {
 		RotationallySymmetric2DLatticeInterface lattices[] = new RotationallySymmetric2DLatticeInterface[NUM_2D_LATTICE_CASES];
 		
 		//TOOD: Put this in a factory class.
-		lattices[0] = new BasicHalf();
+		lattices[0] = new HalfAxisTopLeft00();
 		lattices[1] = new HalfAxisAtLeft00();
 		lattices[2] = new HalfAxisAtMid00();
-		lattices[3] = new BasicQuarter();
+		lattices[3] = new QuarterAxisTopLeft00();
 		lattices[4] = new QuarterAxisAtMid00();
 		
 

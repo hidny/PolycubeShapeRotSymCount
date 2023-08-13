@@ -2,16 +2,16 @@ package PartOfRotSymmetric2DLattice;
 
 import Coord.Coord2D;
 
-public class HalfAxisAtLeft00 implements RotationallySymmetric2DLatticeInterface {
+public class HalfAxisTopLeft00 implements RotationallySymmetric2DLatticeInterface {
 
-	//Case 3:
-
+	//Case 4:
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
 		int MID = 10;
 		
-		HalfAxisAtLeft00 bh = new HalfAxisAtLeft00();
+		HalfAxisTopLeft00 bh = new HalfAxisTopLeft00();
 		
 		int tmp[][] = new int[2][2];
 		for(int i=-MID; i< MID; i++) {
@@ -33,10 +33,10 @@ public class HalfAxisAtLeft00 implements RotationallySymmetric2DLatticeInterface
 	
 	
 	//TODO: have drawing to show it:
-	// Basic quarter where rotation is at 0,0
+	//Basic half where rotation axis is at bottom left of 0,0
 	
 	public static final int NUM_SYMMETRIES = 2;
-	
+
 	public boolean isPartOfLattice(int i, int j) {
 		
 		return j>= 0;
@@ -51,7 +51,8 @@ public class HalfAxisAtLeft00 implements RotationallySymmetric2DLatticeInterface
 			
 
 			if(ret[1][k] < 0) {
-				ret[0][k] = - ret[0][k];
+				//The +1 makes the difference between this and HalfAxisAtLeft00:
+				ret[0][k] = - (ret[0][k] - 1);
 				ret[1][k] = 0;
 			}
 		}
@@ -59,20 +60,22 @@ public class HalfAxisAtLeft00 implements RotationallySymmetric2DLatticeInterface
 		return ret;
 	}
 	
-
 	public int[][] getRotationallySymmetricPoints(int ret[][], int i, int j) {
 
+		
 		ret = new int[2][2];
+		
 		ret[0][0] = i;
 		ret[1][0] = j;
 		
 
-		ret[0][1] = - i;
+		ret[0][1] = - (i - 1);
 		ret[1][1] = - (j + 1);
+		
+		
 		
 		return ret;
 	}
-	
 
 	public int getWeightOfPoint(int i, int j) {
 		return NUM_SYMMETRIES;
@@ -82,14 +85,12 @@ public class HalfAxisAtLeft00 implements RotationallySymmetric2DLatticeInterface
 		return NUM_SYMMETRIES;
 	}
 
-	//TODO: fix this somehow!
 	@Override
 	public boolean isSolutionAcceptableAndNotDoubleCounting(Coord2D squaresUsed[]) {
 		return true;
 	}
 	
-
 	public String toString() {
-		return "Half with axis at left of 00";
+		return "Half with axis at top left of 00";
 	}
 }

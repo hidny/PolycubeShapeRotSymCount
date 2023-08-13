@@ -63,6 +63,8 @@ public class QuarterAxisAtMid00 implements RotationallySymmetric2DLatticeInterfa
 	}
 
 	public int[][] getRotationallySymmetricPoints(int[][] ret, int i, int j) {
+		
+		ret = new int[2][4];
 		ret[0][0] = i;
 		ret[1][0] = j;
 		
@@ -86,6 +88,11 @@ public class QuarterAxisAtMid00 implements RotationallySymmetric2DLatticeInterfa
 	@Override
 	public boolean isSolutionAcceptableAndNotDoubleCounting(Coord2D squaresUsed[]) {
 		return true;
+	}
+	
+
+	public String toString() {
+		return "Quarter with axis at mid of 00";
 	}
 
 }
