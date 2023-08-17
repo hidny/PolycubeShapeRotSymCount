@@ -42,23 +42,6 @@ public class HalfAxisAtLeft00 implements RotationallySymmetric2DLatticeInterface
 		return j>= 0;
 	}
 	
-	public int[][] getNeighbours(int ret[][], int i, int j) {
-		
-		for(int k=0; k<Constants.NUM_NEIGHBOURS_2D; k++) {
-			
-			ret[0][k] = i + Constants.nudgeBasedOnRotation[0][k];
-			ret[1][k] = j + Constants.nudgeBasedOnRotation[1][k];
-			
-
-			if(ret[1][k] < 0) {
-				ret[0][k] = - ret[0][k];
-				ret[1][k] = 0;
-			}
-		}
-		
-		return ret;
-	}
-	
 
 	public int[][] getRotationallySymmetricPoints(int ret[][], int i, int j) {
 
@@ -77,17 +60,6 @@ public class HalfAxisAtLeft00 implements RotationallySymmetric2DLatticeInterface
 	public int getWeightOfPoint(int i, int j) {
 		return NUM_SYMMETRIES;
 	}
-
-	public int getMaxNumSymmetries() {
-		return NUM_SYMMETRIES;
-	}
-
-	//TODO: fix this somehow!
-	@Override
-	public boolean isSolutionAcceptableAndNotDoubleCounting(Coord2D squaresUsed[]) {
-		return true;
-	}
-	
 
 	public String toString() {
 		return "Half with axis at left of 00";

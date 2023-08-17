@@ -95,11 +95,12 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 	public static void firstFewNValuesTest() {
 
 		int MAX_N = 20;
+		int MIN_N = Math.min(27, MAX_N);
 		
 		long series[] = new long[MAX_N + 1];
 		
 		long total = 0L;
-		for(int i=MAX_N; i<=MAX_N; i++) {
+		for(int i=MIN_N; i<=MAX_N; i++) {
 			System.out.println("Search for weight " + i);
 			long ret = solveForN(i);
 			
@@ -172,9 +173,7 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 		if(retMult4 % 4 != 0) {
 			System.out.println("ERROR: the number of solutions don't divide cleanly into 4. Got: " + retMult4);
 			
-			if(n != 16) {
-				System.exit(1);
-			}
+			System.exit(1);
 		}
 		
 		long ret = retMult4 / 4;
@@ -228,6 +227,8 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 		return ret;
 	}
 	
+	public static int MAX_NUM_SYMMETRIES_2D = 4;
+	
 	public static long countFor2DLattice(int targetWeight, RotationallySymmetric2DLatticeInterface lattice, boolean disallowedCoords[][], boolean disallowedTransitions[][][], int startI, int startJ) {
 		
 		int CENTER = disallowedCoords.length /2;
@@ -254,12 +255,11 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 		
 		int currentWeight = lattice.getWeightOfPoint(startI, startJ);
 
-		int rotationallySymmetricPointsHolder[][] = new int[2][lattice.getMaxNumSymmetries()];
+		int rotationallySymmetricPointsHolder[][] = new int[2][MAX_NUM_SYMMETRIES_2D];
 		
-		//for(int i=0; i<)
 		rotationallySymmetricPointsHolder = lattice.getRotationallySymmetricPoints(rotationallySymmetricPointsHolder, startI, startJ);
 		
-		for(int i=0; i<rotationallySymmetricPointsHolder[0].length; i++) {
+		for(int i=0; i<lattice.getWeightOfPoint(startI, startJ); i++) {
 			coordsUsedWithRotSymmetry[rotationallySymmetricPointsHolder[0][i] + CENTER]
 									 [rotationallySymmetricPointsHolder[1][i] + CENTER] = true;
 		}
@@ -424,7 +424,7 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 		numIterations++;
 
 		//Display debug/what's-going-on update:
-		if(numIterations % 1000000L == 0) {
+		if(numIterations % 10000000L == 0) {
 			
 			System.out.println("Num iterations: " + numIterations);
 			Utils.printSquares(coordsUsedWithRotSymmetry);

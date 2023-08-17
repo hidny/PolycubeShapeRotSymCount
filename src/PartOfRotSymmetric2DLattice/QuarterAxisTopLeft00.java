@@ -22,26 +22,6 @@ public class QuarterAxisTopLeft00 implements RotationallySymmetric2DLatticeInter
 		return i >= 0 && j>= 0;
 	}
 	
-	public int[][] getNeighbours(int ret[][], int i, int j) {
-		
-		for(int k=0; k<Constants.NUM_NEIGHBOURS_2D; k++) {
-			
-			ret[0][k] = i + Constants.nudgeBasedOnRotation[0][k];
-			ret[1][k] = j + Constants.nudgeBasedOnRotation[1][k];
-			
-			if(ret[0][k] < 0) {
-				ret[0][k] = ret[1][k];
-				ret[1][k] = 0;
-			
-			} else if(ret[1][k] < 0) {
-
-				ret[0][k] = 0;
-				ret[1][k] = ret[0][k];
-			}
-		}
-		
-		return ret;
-	}
 	
 	public int[][] getRotationallySymmetricPoints(int ret[][], int i, int j) {
 
@@ -67,16 +47,6 @@ public class QuarterAxisTopLeft00 implements RotationallySymmetric2DLatticeInter
 	public int getWeightOfPoint(int i, int j) {
 		return NUM_SYMMETRIES;
 	}
-
-	public int getMaxNumSymmetries() {
-		return NUM_SYMMETRIES;
-	}
-
-	@Override
-	public boolean isSolutionAcceptableAndNotDoubleCounting(Coord2D squaresUsed[]) {
-		return true;
-	}
-	
 
 	public String toString() {
 		return "Quarter with axis at top-left of 00";
