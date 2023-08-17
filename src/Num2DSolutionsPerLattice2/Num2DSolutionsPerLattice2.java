@@ -11,6 +11,7 @@ import PartOfRotSymmetric2DLattice.HalfAxisAtLeft00;
 import PartOfRotSymmetric2DLattice.HalfAxisAtMid00;
 import PartOfRotSymmetric2DLattice.QuarterAxisAtMid00;
 import PartOfRotSymmetric2DLattice.RotationallySymmetric2DLatticeInterface;
+import Utils.DistanceUtils;
 import Utils.Utils;
 
 public class Num2DSolutionsPerLattice2 {
@@ -94,8 +95,8 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 
 	public static void firstFewNValuesTest() {
 
-		int MAX_N = 20;
-		int MIN_N = Math.min(27, MAX_N);
+		int MAX_N = 28;
+		int MIN_N = Math.min(28, MAX_N);
 		
 		long series[] = new long[MAX_N + 1];
 		
@@ -203,6 +204,9 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 		//TODO: I don't know what the limit should be. (n/2 seems ok for now)
 		while(startI < (n+1)/2) {
 
+			//TOOD: implement and take seriously:
+			DistanceUtils.getMinNumSquaresToConnectAtStart(lattice, disallowedCoords, startI, startJ);
+			
 			//System.out.println("Using this startI and startJ coord: " + startI + ", " + startJ);
 			ret += countFor2DLattice(n, lattice, disallowedCoords, disallowedTransitions, startI, startJ);
 
@@ -226,6 +230,7 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 		
 		return ret;
 	}
+	
 	
 	public static int MAX_NUM_SYMMETRIES_2D = 4;
 	
