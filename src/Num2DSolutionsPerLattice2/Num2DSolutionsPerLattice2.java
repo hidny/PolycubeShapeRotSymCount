@@ -3,7 +3,7 @@ package Num2DSolutionsPerLattice2;
 import java.util.LinkedList;
 
 import Coord.Coord2D;
-import NumSymmetricCubes2DSolve.TopHalfIterator;
+import NumSymmetricCubes2DSolve.coordIterator;
 import PartOfRotSymmetric2DLattice.HalfAxisTopLeft00;
 import PartOfRotSymmetric2DLattice.QuarterAxisTopLeft00;
 import PartOfRotSymmetric2DLattice.Constants;
@@ -214,7 +214,7 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 			}
 			
 			do {
-				int coord[] = TopHalfIterator.getNext(startI, startJ);
+				int coord[] = coordIterator.getNext(startI, startJ);
 				startI = coord[0];
 				startJ = coord[1];
 			
