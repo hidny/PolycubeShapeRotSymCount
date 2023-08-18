@@ -15,9 +15,10 @@ public class DistanceUtils {
 
 	public static int getMinNumSquaresToConnectAtStart(RotationallySymmetric2DLatticeInterface lattice, boolean disallowedCoords[][], int startI, int startJ) {
 		
+		int CENTER_INDEX = disallowedCoords.length / 2;
+		
 		int startPoints[][] = lattice.getRotationallySymmetricPoints(new int[2][4], startI, startJ);
 		int weight = lattice.getWeightOfPoint(startI, startJ);
-		int finalCeilingDivisor = weight;
 		
 		if(weight <= 0) {
 			return 0;
@@ -29,7 +30,6 @@ public class DistanceUtils {
 		for(int k=0; k<weight; k++) {
 			int dist = getManhantanDist(startI, startPoints[0][k], startJ, startPoints[1][k]);
 			
-			disallowedCoords[startPoints[0][k]][startPoints[1][k]] = false;
 			
 			if(dist > 0) {
 				if(currentFurthestDist < dist) {
@@ -40,8 +40,8 @@ public class DistanceUtils {
 			}
 		}
 		
-		System.out.println(startI + ", " + startJ);
-		System.out.println("Current Furthest dist: " + currentFurthestDist);
+		//System.out.println(startI + ", " + startJ);
+		//System.out.println("Current Furthest dist: " + currentFurthestDist);
 		
 		int goalI = startPoints[0][currentFurthestIndex];
 		int goalJ = startPoints[1][currentFurthestIndex];
@@ -52,14 +52,11 @@ public class DistanceUtils {
 		//TODO: Do I go wild with A*?
 		//Why not?
 		
-		for(int k=0; k<weight; k++) {
-			disallowedCoords[startPoints[0][k]][startPoints[1][k]] = true;
-		}
-
 		int ret = dist / weight;
 		if(dist % weight > 0) {
 			ret++;
 		}
+
 		return ret;
 	}
 	
@@ -70,8 +67,14 @@ public class DistanceUtils {
 
 	public static int getDistBreadthFirst(int startI, int startJ, boolean disallowedCoords[][], int goalI, int goalJ) {
 		
+		if(startI == goalI && startJ == goalJ) {
+			return 0;
+		}
+		
+		int CENTER_INDEX = disallowedCoords.length / 2;
+		
 		Queue<Coord3D> queue = new LinkedList<Coord3D>();
-		queue.add(new Coord3D(goalI, goalJ, 0));
+		queue.add(new Coord3D(startI, startJ, 0));
 		
 		boolean found[][] = new boolean[disallowedCoords.length][disallowedCoords[0].length];
 		
@@ -85,8 +88,10 @@ public class DistanceUtils {
 			
 			Coord3D cur = queue.remove();
 			
+			//System.out.println(cur.a + ", " + cur.b + ": " + cur.c);
+			//System.out.println("GOAL: " + goalI + ", " + goalJ);
 			
-			for(int k=0; k<nudgeBasedOnRotation2D.length; k++) {
+			for(int k=0; k<nudgeBasedOnRotation2D[0].length; k++) {
 				
 				int newI = cur.a +  nudgeBasedOnRotation2D[0][k];
 				int newJ = cur.b +  nudgeBasedOnRotation2D[1][k];
@@ -94,7 +99,13 @@ public class DistanceUtils {
 				if(newI == goalI && newJ == goalJ) {
 					return cur.c + 1;
 
-				} else if( ! found[newI][newJ] && !disallowedCoords[newI][newJ]) {					
+				} else if(CENTER_INDEX + newI < 0 || CENTER_INDEX + newI >= disallowedCoords.length 
+						|| CENTER_INDEX + newJ < 0 || CENTER_INDEX + newJ >= disallowedCoords.length) {
+					continue;
+
+				} else if( ! found[CENTER_INDEX + newI][CENTER_INDEX + newJ] && !disallowedCoords[CENTER_INDEX + newI][CENTER_INDEX + newJ]) {
+					
+					found[CENTER_INDEX + newI][CENTER_INDEX + newJ] = true;
 					queue.add(new Coord3D(newI, newJ, cur.c + 1));
 				}
 				

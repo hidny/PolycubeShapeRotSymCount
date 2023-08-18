@@ -11,6 +11,7 @@ import PartOfRotSymmetric2DLattice.HalfAxisTopLeft00;
 import PartOfRotSymmetric2DLattice.QuarterAxisAtMid00;
 import PartOfRotSymmetric2DLattice.QuarterAxisTopLeft00;
 import PartOfRotSymmetric2DLattice.RotationallySymmetric2DLatticeInterface;
+import Utils.DistanceUtils;
 import Utils.Utils;
 
 public class Num2DSolutionsPerLattice2 {
@@ -92,8 +93,8 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 
 	public static void firstFewNValuesTest() {
 
-		int MAX_N = 16;
-		int MIN_N = Math.min(1, MAX_N);
+		int MAX_N = 28;
+		int MIN_N = Math.min(28, MAX_N);
 		
 		long series[] = new long[MAX_N + 1];
 		
@@ -202,11 +203,20 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 		while(startI < (n+1)/2) {
 
 			//TODO: implement and take seriously:
-			//DistanceUtils.getMinNumSquaresToConnectAtStart(lattice, disallowedCoords, startI, startJ);
+			int squaresNeededToConnect = DistanceUtils.getMinNumSquaresToConnectAtStart(lattice, disallowedCoords, startI, startJ);
+			
+			System.out.println(n + " ### " + squaresNeededToConnect);
+			System.out.println();
+			System.out.println();
+
+			//System.out.println("##squaresNeededToConnect: " + squaresNeededToConnect);
 			
 			//System.out.println("Using this startI and startJ coord: " + startI + ", " + startJ);
-			if( ! disallowedCoords[CENTER + startI][CENTER + startJ]) {
+			if( n >= squaresNeededToConnect && ! disallowedCoords[CENTER + startI][CENTER + startJ]) {
 				ret += countFor2DLattice(n, lattice, disallowedCoords, disallowedTransitions, startI, startJ);
+			
+			} else if(! disallowedCoords[CENTER + startI][CENTER + startJ]) {
+				System.out.println("Boosted!");
 			}
 
 			int coordsToDisallow[][] = null;
@@ -403,8 +413,7 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 
 				numSolutionsSoFarDebug++;
 
-				if(targetWeight < 7
-						|| (targetWeight == 16 && lattice.toString().contains("Quarter"))) {
+				if(targetWeight < 7) {
 					System.out.println("hello " + lattice);
 					Utils.printSquares(coordsUsedWithRotSymmetry);
 				}
