@@ -16,10 +16,6 @@ public class QuarterAxisAtMid00 implements RotationallySymmetric2DLatticeInterfa
 	
 	public static final int NUM_SYMMETRIES = 4;
 
-	public boolean isPartOfLattice(int i, int j) {
-		
-		return (i ==0 && j == 0) || (i >= 1 && j>= 0);
-	}
 	
 
 	public int getWeightOfPoint(int i, int j) {

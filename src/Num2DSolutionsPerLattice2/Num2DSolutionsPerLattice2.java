@@ -4,14 +4,13 @@ import java.util.LinkedList;
 
 import Coord.Coord2D;
 import NumSymmetricCubes2DSolve.coordIterator;
-import PartOfRotSymmetric2DLattice.HalfAxisTopLeft00;
-import PartOfRotSymmetric2DLattice.QuarterAxisTopLeft00;
 import PartOfRotSymmetric2DLattice.Constants;
 import PartOfRotSymmetric2DLattice.HalfAxisAtLeft00;
 import PartOfRotSymmetric2DLattice.HalfAxisAtMid00;
+import PartOfRotSymmetric2DLattice.HalfAxisTopLeft00;
 import PartOfRotSymmetric2DLattice.QuarterAxisAtMid00;
+import PartOfRotSymmetric2DLattice.QuarterAxisTopLeft00;
 import PartOfRotSymmetric2DLattice.RotationallySymmetric2DLatticeInterface;
-import Utils.DistanceUtils;
 import Utils.Utils;
 
 public class Num2DSolutionsPerLattice2 {
@@ -42,7 +41,7 @@ public class Num2DSolutionsPerLattice2 {
 		//testSolve();
 	}
 	
-	public static int DEBUG_TEST_N = 20;
+	public static int DEBUG_TEST_N = 16;
 
 	public static void testSolve() {
 		RotationallySymmetric2DLatticeInterface lattices[] = new RotationallySymmetric2DLatticeInterface[NUM_2D_LATTICE_CASES];
@@ -95,8 +94,8 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 
 	public static void firstFewNValuesTest() {
 
-		int MAX_N = 28;
-		int MIN_N = Math.min(28, MAX_N);
+		int MAX_N = 22;
+		int MIN_N = Math.min(15, MAX_N);
 		
 		long series[] = new long[MAX_N + 1];
 		
@@ -204,11 +203,13 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 		//TODO: I don't know what the limit should be. (n/2 seems ok for now)
 		while(startI < (n+1)/2) {
 
-			//TOOD: implement and take seriously:
-			DistanceUtils.getMinNumSquaresToConnectAtStart(lattice, disallowedCoords, startI, startJ);
+			//TODO: implement and take seriously:
+			//DistanceUtils.getMinNumSquaresToConnectAtStart(lattice, disallowedCoords, startI, startJ);
 			
 			//System.out.println("Using this startI and startJ coord: " + startI + ", " + startJ);
-			ret += countFor2DLattice(n, lattice, disallowedCoords, disallowedTransitions, startI, startJ);
+			if( ! disallowedCoords[CENTER + startI][CENTER + startJ]) {
+				ret += countFor2DLattice(n, lattice, disallowedCoords, disallowedTransitions, startI, startJ);
+			}
 
 			int coordsToDisallow[][] = null;
 			coordsToDisallow = lattice.getRotationallySymmetricPoints(tmpArray, startI, startJ);
@@ -216,13 +217,11 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 			for(int k=0; k<lattice.getWeightOfPoint(startI, startJ); k++) {
 				disallowedCoords[coordsToDisallow[0][k] + CENTER][coordsToDisallow[1][k] + CENTER] = true;
 			}
+		
+			int coord[] = coordIterator.getNext(startI, startJ);
+			startI = coord[0];
+			startJ = coord[1];
 			
-			do {
-				int coord[] = coordIterator.getNext(startI, startJ);
-				startI = coord[0];
-				startJ = coord[1];
-			
-			} while( ! lattice.isPartOfLattice(startI, startJ));
 			
 
 			
@@ -237,10 +236,6 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 	public static long countFor2DLattice(int targetWeight, RotationallySymmetric2DLatticeInterface lattice, boolean disallowedCoords[][], boolean disallowedTransitions[][][], int startI, int startJ) {
 		
 		int CENTER = disallowedCoords.length /2;
-		
-		if( ! lattice.isPartOfLattice(startI, startJ)) {
-			return 0L;
-		}
 		
 		/*if(lattice.toString().contains("with axis at mid of 00")
 				&& lattice.toString().contains("Quarter")

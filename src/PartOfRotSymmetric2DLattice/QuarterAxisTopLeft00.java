@@ -17,10 +17,6 @@ public class QuarterAxisTopLeft00 implements RotationallySymmetric2DLatticeInter
 	
 	public static final int NUM_SYMMETRIES = 4;
 	
-	public boolean isPartOfLattice(int i, int j) {
-		
-		return i >= 0 && j>= 0;
-	}
 	
 	
 	public int[][] getRotationallySymmetricPoints(int ret[][], int i, int j) {

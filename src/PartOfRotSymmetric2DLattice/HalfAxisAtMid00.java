@@ -12,12 +12,6 @@ public class HalfAxisAtMid00 implements RotationallySymmetric2DLatticeInterface 
 	
 	public static final int NUM_SYMMETRIES = 2;
 
-	public boolean isPartOfLattice(int i, int j) {
-		
-		return j >= 1 || ( i <= 0 && j >= 0);
-	}
-	
-
 	public int[][] getRotationallySymmetricPoints(int ret[][], int i, int j) {
 
 		ret = new int[2][2];
