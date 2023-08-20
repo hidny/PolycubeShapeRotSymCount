@@ -215,12 +215,14 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 				//System.out.println("Using this startI and startJ coord: " + startI + ", " + startJ);
 				
 				//TODO: get rid of it soon:
+				//TODO: make sure getting rid of this condition means nothing becuase function will exit quickly...
 				if( n >= squaresNeededToConnect2) {
-					ret += countFor2DLattice(n, lattice, disallowedCoords, disallowedTransitions, startI, startJ);
+					ret += countFor2DLattice(n, lattice, disallowedCoords, disallowedTransitions, startI, startJ,
+							squaresNeededToConnect2, distances);
 				//END TODO
 					
 				} else {
-					System.out.println("Boosted!");
+					//System.out.println("Boosted!");
 				}
 	
 				int coordsToDisallow[][] = null;
@@ -248,7 +250,8 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 	
 	public static int MAX_NUM_SYMMETRIES_2D = 4;
 	
-	public static long countFor2DLattice(int targetWeight, RotationallySymmetric2DLatticeInterface lattice, boolean disallowedCoords[][], boolean disallowedTransitions[][][], int startI, int startJ) {
+	public static long countFor2DLattice(int targetWeight, RotationallySymmetric2DLatticeInterface lattice, boolean disallowedCoords[][], boolean disallowedTransitions[][][], int startI, int startJ,
+			int squaresNeededToConnect2, int distancesToGoal[][]) {
 		
 		int CENTER = disallowedCoords.length /2;
 		
@@ -323,7 +326,8 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 				debugNope, debugIterations,
 				squaresOrdering, minIndexToUse, minRotationToUse,
 				lattice, currentWeight, coordsUsedWithRotSymmetry, disallowedCoords, disallowedTransitions,
-				targetWeight, CENTER);
+				targetWeight, CENTER,
+				squaresNeededToConnect2, distancesToGoal);
 	}
 	
 	//This is wildly inefficient.
@@ -400,7 +404,8 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 			boolean debugNope, long debugIterations[],
 			int squaresOrdering[][], int minIndexToUse, int minRotationToUse,
 			RotationallySymmetric2DLatticeInterface lattice, int currentWeight, boolean coordsUsedWithRotSymmetry[][], boolean disallowedCoords[][], boolean disallowedTransitions[][][],
-			int targetWeight, int CENTER_ARRAY) {
+			int targetWeight, int CENTER_ARRAY,
+			int squaresNeededToConnect2, int distancesToGoal[][]) {
 
 		
 		/*System.out.println("boom " + currentWeight);
@@ -411,6 +416,17 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 		Utils.Utils.printSquares(coordsUsed);
 		System.out.println("End tmp");
 		*/
+		
+		
+		
+		//TODO: AHH! lattice.getWeightOfPoint(3, 3) is a hack...
+		// TODO: / 2 is a hack
+		if(squaresNeededToConnect2 > (targetWeight - currentWeight) / lattice.getWeightOfPoint(3, 3)) {
+			//System.out.println("SHORTCUT! " + lattice.getWeightOfPoint(3, 3));
+			return 0L;
+			//debugNope = true;
+		}
+		
 		if(currentWeight > targetWeight) {
 			return 0L;
 		} else if(currentWeight == targetWeight) {
@@ -419,6 +435,13 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 				/*&& lattice.isSolutionAcceptableAndNotDoubleCounting(squaresToDevelop)*/) {
 
 				numSolutionsSoFarDebug++;
+				
+				if(debugNope) {
+					System.out.println("DEBUG");
+					Utils.printSquares(coordsUsedWithRotSymmetry);
+					System.out.println("DEBUG");
+					System.exit(1);
+				}
 
 				if(targetWeight < 7) {
 					System.out.println("hello " + lattice);
@@ -509,13 +532,31 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 					//End setup
 
 					numCellsUsedDepth += 1;
+					
+					//distancesToGoal
+					//TODO: I think this could be improved...
+					boolean newCellCloserToGoal = distancesToGoal[CENTER_ARRAY + new_i][CENTER_ARRAY + new_j] <
+							distancesToGoal[CENTER_ARRAY + squaresToDevelop[curOrderedIndexToUse].a]
+									[CENTER_ARRAY + squaresToDevelop[curOrderedIndexToUse].b];
+					//If newCellCloserToGoal, maybe do a BFS to see if it's actually closer?
+					
+					if(newCellCloserToGoal) {
+						squaresNeededToConnect2--;
+					}
+					
 				
 					retDuplicateSolutions += doDepthFirstSearch(squaresToDevelop, numCellsUsedDepth,
 							debugNope, debugIterations,
 							squaresOrdering, curOrderedIndexToUse, dirNewCellAdd,
 							lattice, currentWeight, coordsUsedWithRotSymmetry, disallowedCoords, disallowedTransitions,
-							targetWeight, CENTER_ARRAY
+							targetWeight, CENTER_ARRAY,
+							squaresNeededToConnect2, distancesToGoal
 						);
+					
+					
+					if(newCellCloserToGoal) {
+						squaresNeededToConnect2++;
+					}
 					
 					numCellsUsedDepth -= 1;
 

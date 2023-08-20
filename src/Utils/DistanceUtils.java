@@ -116,7 +116,9 @@ public class DistanceUtils {
 		int CENTER_INDEX = distances.length / 2;
 		
 		//For now, just DFS
-		int dist = distances[CENTER_INDEX + startI][CENTER_INDEX + startJ];
+		
+		// Added (- 1) because if the 2 squares are dist 2 away from each other, there's only 1 tile to put in between them.
+		int dist = Math.max(distances[CENTER_INDEX + startI][CENTER_INDEX + startJ] - 1, 0);
 		
 		//TODO: Do I go wild with A*?
 		//Why not?
@@ -124,9 +126,11 @@ public class DistanceUtils {
 		int weight = lattice.getWeightOfPoint(startI, startJ);
 		
 		int ret = dist / weight;
-		if(dist % weight > 0) {
+		
+		//This doesn't work!
+		/*if(dist % weight > 0) {
 			ret++;
-		}
+		}*/
 
 		return ret;
 	}
