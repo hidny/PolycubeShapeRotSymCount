@@ -71,30 +71,10 @@ public class Num2DSolutionsPerLattice2 {
 
 	 */
 	
-	/* Debug N=16
-	 * Sanity check results:
-	 * Debugging 2D rotations:
-Number of rotations by type:
-Type 0: 2685
-Type 1: 13520
-Type 2: 472
-Type 3: 19
-Type 4: 10
-
-Lattice2 results:
-Solutions for (Half with axis at top left of 00): 2685
-Solutions for (Half with axis at left of 00): 6760  (x2 because this doesn't also count top of 00)
-Solutions for (Half with axis at mid of 00): 472
-Solutions for (Quarter with axis at top-left of 00): 19
-Solutions for (Quarter with axis at mid of 00): 9
-
-Looks like I missed 1 for Quarter with axis at mid of 00...
-	 */
-
 	public static void firstFewNValuesTest() {
 
-		int MAX_N = 24;
-		int MIN_N = Math.min(0, MAX_N);
+		int MAX_N = 34;
+		int MIN_N = Math.min(MAX_N, MAX_N);
 		
 		long series[] = new long[MAX_N + 1];
 		
@@ -539,6 +519,7 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 							distancesToGoal[CENTER_ARRAY + squaresToDevelop[curOrderedIndexToUse].a]
 									[CENTER_ARRAY + squaresToDevelop[curOrderedIndexToUse].b];
 					//If newCellCloserToGoal, maybe do a BFS to see if it's actually closer?
+					//TODO: when BFS, avoid 'tried' cells. (Cell that can't be used...)
 					
 					if(newCellCloserToGoal) {
 						squaresNeededToConnect2--;
