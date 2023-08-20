@@ -93,8 +93,8 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 
 	public static void firstFewNValuesTest() {
 
-		int MAX_N = 28;
-		int MIN_N = Math.min(28, MAX_N);
+		int MAX_N = 24;
+		int MIN_N = Math.min(0, MAX_N);
 		
 		long series[] = new long[MAX_N + 1];
 		
@@ -127,7 +127,7 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 		//solveForN(4);
 	}
 	
-	public static final int PADDING_FACTOR = 10;
+	public static final int PADDING_FACTOR = 2;
 	
 	public static final int NUM_2D_LATTICE_CASES = 5;
 	
@@ -193,7 +193,7 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 		int startJ = 0;
 		
 		
-		boolean disallowedCoords[][] = new boolean[PADDING_FACTOR * n][PADDING_FACTOR * n];
+		boolean disallowedCoords[][] = new boolean[PADDING_FACTOR * (n + 2)][PADDING_FACTOR * (n + 2)];
 		int CENTER = disallowedCoords.length /2;
 		
 		boolean disallowedTransitions[][][] = Utils.getDisallowed2DTransitionsBecauseItIsRedundant(lattice, disallowedCoords.length);
@@ -202,28 +202,35 @@ Looks like I missed 1 for Quarter with axis at mid of 00...
 		//TODO: I don't know what the limit should be. (n/2 seems ok for now)
 		while(startI < (n+1)/2) {
 
-			//TODO: implement and take seriously:
-			int squaresNeededToConnect = DistanceUtils.getMinNumSquaresToConnectAtStart(lattice, disallowedCoords, startI, startJ);
-			
-			System.out.println(n + " ### " + squaresNeededToConnect);
-			System.out.println();
-			System.out.println();
+			if(! disallowedCoords[CENTER + startI][CENTER + startJ]) {
 
-			//System.out.println("##squaresNeededToConnect: " + squaresNeededToConnect);
-			
-			//System.out.println("Using this startI and startJ coord: " + startI + ", " + startJ);
-			if( n >= squaresNeededToConnect && ! disallowedCoords[CENTER + startI][CENTER + startJ]) {
-				ret += countFor2DLattice(n, lattice, disallowedCoords, disallowedTransitions, startI, startJ);
-			
-			} else if(! disallowedCoords[CENTER + startI][CENTER + startJ]) {
-				System.out.println("Boosted!");
-			}
-
-			int coordsToDisallow[][] = null;
-			coordsToDisallow = lattice.getRotationallySymmetricPoints(tmpArray, startI, startJ);
-
-			for(int k=0; k<lattice.getWeightOfPoint(startI, startJ); k++) {
-				disallowedCoords[coordsToDisallow[0][k] + CENTER][coordsToDisallow[1][k] + CENTER] = true;
+				int goalCoord[] = DistanceUtils.getGoalCoord(lattice, disallowedCoords, startI, startJ);
+				
+				int distances[][] = DistanceUtils.getDistancesFromGoal(disallowedCoords, goalCoord[0], goalCoord[1]);
+				
+				int squaresNeededToConnect2 = DistanceUtils.getMinNumSquaresToConnectAtStart2(lattice, distances, startI, startJ);
+				
+				//System.out.println("##squaresNeededToConnect: " + squaresNeededToConnect);
+				
+				//System.out.println("Using this startI and startJ coord: " + startI + ", " + startJ);
+				
+				//TODO: get rid of it soon:
+				if( n >= squaresNeededToConnect2) {
+					ret += countFor2DLattice(n, lattice, disallowedCoords, disallowedTransitions, startI, startJ);
+				//END TODO
+					
+				} else {
+					System.out.println("Boosted!");
+				}
+	
+				int coordsToDisallow[][] = null;
+				coordsToDisallow = lattice.getRotationallySymmetricPoints(tmpArray, startI, startJ);
+	
+				for(int k=0; k<lattice.getWeightOfPoint(startI, startJ); k++) {
+					disallowedCoords[coordsToDisallow[0][k] + CENTER][coordsToDisallow[1][k] + CENTER] = true;
+				}
+				
+				
 			}
 		
 			int coord[] = coordIterator.getNext(startI, startJ);

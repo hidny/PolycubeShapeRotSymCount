@@ -186,10 +186,6 @@ public class Utils {
 		boolean ret[][][] = new boolean[sizeArrayDims][sizeArrayDims][NUM_2D_NEIGHBOURDS];
 		int CENTER = sizeArrayDims /2;
 		
-		if(sizeArrayDims < 10) {
-			System.out.println("ERROR: size of array for Utils.getDisallowed2DTransitions is too small");
-			System.exit(1);
-		}
 
 		for(int i=0; i<ret.length; i++) {
 			for(int j=0; j<ret[0].length; j++) {
