@@ -1,4 +1,58 @@
 
+As of Aug 21st, it took 40 minutes to do this:
+Numbers for N = 28
+
+Num fixed polycubes: 1228088671826973
+Solutions for (Half with axis at top left of 00): 9227412
+Solutions for (Half with axis at left of 00): 22908230
+Solutions for (Half with axis at mid of 00): 2016677
+Solutions for (Quarter with axis at top-left of 00): 790
+Solutions for (Quarter with axis at mid of 00): 461
+Answer for weight 28: 307022182222506
+
+Printing series obtained:
+0: 1 (expected: 1)
+1: 1 (expected: 1)
+2: 1 (expected: 1)
+3: 2 (expected: 2)
+4: 7 (expected: 7)
+5: 18 (expected: 18)
+6: 60 (expected: 60)
+7: 196 (expected: 196)
+8: 704 (expected: 704)
+9: 2500 (expected: 2500)
+10: 9189 (expected: 9189)
+11: 33896 (expected: 33896)
+12: 126759 (expected: 126759)
+13: 476270 (expected: 476270)
+14: 1802312 (expected: 1802312)
+15: 6849777 (expected: 6849777)
+16: 26152418 (expected: 26152418)
+17: 100203194 (expected: 100203194)
+18: 385221143 (expected: 385221143)
+19: 1485200848 (expected: 1485200848)
+20: 5741256764 (expected: 5741256764)
+21: 22245940545 (expected: 22245940545)
+22: 86383382827 (expected: 86383382827)
+23: 336093325058 (expected: 336093325058)
+24: 1309998125640 (expected: 1309998125640)
+25: 5114451441106 (expected: 5114451441106)
+26: 19998172734786 (expected: 19998172734786)
+27: 78306011677182 (expected: 78306011677182)
+28: 307022182222506 (expected: 307022182222506)
+
+
+Numbers for N = 29
+Num fixed polycubes: 4820975409710116
+Solutions for (Half with axis at top left of 00): 0
+Solutions for (Half with axis at left of 00): 0
+Solutions for (Half with axis at mid of 00): 57118440
+Solutions for (Quarter with axis at top-left of 00): 0
+Solutions for (Quarter with axis at mid of 00): 658
+Answer for weight 29: 1205243866707468
+
+
+
 	/* Debug N=16
 	 * Sanity check results:
 	 * Debugging 2D rotations:

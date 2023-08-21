@@ -73,8 +73,8 @@ public class Num2DSolutionsPerLattice2 {
 	
 	public static void firstFewNValuesTest() {
 
-		int MAX_N = 30;
-		int MIN_N = Math.min(0, MAX_N);
+		int MAX_N = 32;
+		int MIN_N = Math.min(MAX_N, MAX_N);
 		
 		long series[] = new long[MAX_N + 1];
 		
@@ -380,7 +380,6 @@ public class Num2DSolutionsPerLattice2 {
 	public static int tmpArray[][] = new int[2][4];
 	
 	
-	//TODO: recursive function
 	public static long doDepthFirstSearch(Coord2D squaresToDevelop[], int numCellsUsedDepth,
 			boolean debugNope, long debugIterations[],
 			int squaresOrdering[][], int minIndexToUse, int minRotationToUse,
@@ -389,32 +388,14 @@ public class Num2DSolutionsPerLattice2 {
 			int squaresNeededToConnect2, int distancesToGoal[][],
 			boolean coordsUsedInCurrentIsland[][]) {
 
-		
-		/*System.out.println("boom " + currentWeight);
-
-		System.out.println("temp");
-		Utils.Utils.printSquares(coordsUsedWithRotSymmetry);
-		System.out.println("tmp2");
-		Utils.Utils.printSquares(coordsUsed);
-		System.out.println("End tmp");
-		*/
-		
-		
-		
-		//TODO: AHH! lattice.getWeightOfPoint(3, 3) is a hack...
 		// TODO: Add constant for the "/ 2" is a hack
 		//Divide by 2 to go halfway around...
 		
-		int DEBUG_FIX_TODO_DELETE = 0;
 		
-		if(squaresNeededToConnect2 > (targetWeight - currentWeight) / 2) {
-			debugNope = true;
-		}
-		
-		if(squaresNeededToConnect2 - DEBUG_FIX_TODO_DELETE > (targetWeight - currentWeight) / 2) {
-			//System.out.println("SHORTCUT! " + lattice.getWeightOfPoint(3, 3));
+		// TODO: make it /4 for quarterAxis in future.
+		if(squaresNeededToConnect2 > (targetWeight - currentWeight) / 2
+				&& lattice.toString().toLowerCase().contains("half")) {
 			return 0L;
-			//debugNope = true;
 		}
 		
 		
@@ -424,8 +405,7 @@ public class Num2DSolutionsPerLattice2 {
 		} else if(currentWeight == targetWeight) {
 			
 			//TODO: get rid of isConnected soon.
-			if(isConnected(coordsUsedWithRotSymmetry, squaresToDevelop[0].a, squaresToDevelop[0].b, targetWeight, CENTER_ARRAY)
-				/*&& lattice.isSolutionAcceptableAndNotDoubleCounting(squaresToDevelop)*/) {
+			if(isConnected(coordsUsedWithRotSymmetry, squaresToDevelop[0].a, squaresToDevelop[0].b, targetWeight, CENTER_ARRAY) ) {
 
 				numSolutionsSoFarDebug++;
 				
@@ -441,6 +421,7 @@ public class Num2DSolutionsPerLattice2 {
 					System.out.println("hello " + lattice);
 					Utils.printSquares(coordsUsedWithRotSymmetry);
 				}
+				//Utils.printSquares(coordsUsedWithRotSymmetry);
 				
 				if(numSolutionsSoFarDebug % 100000 == 0) {
 					System.out.println("Solution " + numSolutionsSoFarDebug + ":");
@@ -529,69 +510,25 @@ public class Num2DSolutionsPerLattice2 {
 
 					numCellsUsedDepth += 1;
 					
+					
 					//distancesToGoal
 					//TODO: I think this could be improved...
 					boolean newCellCloserToGoal = 
 							squaresNeededToConnect2 > 0
-							&&  distancesToGoal[CENTER_ARRAY + new_i][CENTER_ARRAY + new_j] <
-							    distancesToGoal[CENTER_ARRAY + squaresToDevelop[curOrderedIndexToUse].a]
-									[CENTER_ARRAY + squaresToDevelop[curOrderedIndexToUse].b]
-							//&& DistanceUtils.couldGetToOtherIslandInWithNnewTiles(coordsUsedWithRotSymmetry, disallowedCoords, new_i, new_j, coordsUsedInCurrentIsland, squaresNeededToConnect2 - 1)
-					
-					;
-					boolean debugNopeNextIter = false;
-					
-					//If newCellCloserToGoal, maybe do a BFS to see if it's actually closer?
-					//TODO: when BFS, avoid 'tried' cells. (Cell that can't be used...)
+							&& DistanceUtils.couldGetToOtherIslandInWithNnewTiles(coordsUsedWithRotSymmetry, disallowedCoords, new_i, new_j, coordsUsedInCurrentIsland, squaresNeededToConnect2 - 1);
 					
 					if(newCellCloserToGoal) {
-						if( ! DistanceUtils.couldGetToOtherIslandInWithNnewTiles(coordsUsedWithRotSymmetry, disallowedCoords, new_i, new_j, coordsUsedInCurrentIsland, squaresNeededToConnect2 - 1)) {
-							//debugNopeNextIter = true;
-							
-							/*System.out.println("Debug");
-							for(int d=0; d<debugIterations.length; d++) {
-								System.out.println(debugIterations[d]);
-							}
-							System.out.println("(END DEBUG)");*/
-						}
-						
-						if(debugIterations[1] == 107 && debugIterations[2]==108 && debugIterations[3] == 113) {
-							System.out.println("TIME TO DEBUG!");
-							
-							System.out.println("Function call:");
-							Utils.printSquares(coordsUsedWithRotSymmetry);
-							System.out.println("AND:");
-							Utils.printSquares(coordsUsedInCurrentIsland);
-							System.out.println("...");
-							
-							for(int i2=0; i2<distancesToGoal.length; i2++) {
-								for(int j2=0; j2<distancesToGoal[0].length; j2++) {
-									
-									if(distancesToGoal[i2][j2] < 10) {
-										System.out.print(" ");
-									}
-									System.out.print(" " + distancesToGoal[i2][j2]);
-									
-								}
-								System.out.println();
-							}
-							DistanceUtils.couldGetToOtherIslandInWithNnewTiles(coordsUsedWithRotSymmetry, disallowedCoords, new_i, new_j, coordsUsedInCurrentIsland, squaresNeededToConnect2 - 1);
-							
-						}
 						squaresNeededToConnect2 -= weightOfPoint/2;
-						
 					}
 				
 					retDuplicateSolutions += doDepthFirstSearch(squaresToDevelop, numCellsUsedDepth,
-							debugNope || debugNopeNextIter, debugIterations,
+							debugNope, debugIterations,
 							squaresOrdering, curOrderedIndexToUse, dirNewCellAdd,
 							lattice, currentWeight, coordsUsedWithRotSymmetry, disallowedCoords, disallowedTransitions,
 							targetWeight, CENTER_ARRAY,
 							squaresNeededToConnect2, distancesToGoal,
 							coordsUsedInCurrentIsland
 						);
-					
-					debugNopeNextIter = false;
 					
 					if(newCellCloserToGoal) {
 						squaresNeededToConnect2++;
