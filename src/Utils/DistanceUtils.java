@@ -154,4 +154,67 @@ public class DistanceUtils {
 		}
 		System.out.println();
 	}
+	
+	public static boolean couldGetToOtherIslandInWithNnewTiles(boolean coordsUsedWithRotSymmetry[][], boolean disallowedCoords[][], int new_i, int new_j, boolean coordsUsedInCurrentIsland[][], int maxNumTiles) {
+		
+
+		//TODO: don't reinit every time.
+		boolean found[][] = new boolean[disallowedCoords.length][disallowedCoords[0].length];
+		
+		for(int i=0; i<found.length; i++) {
+			for(int j=0; j<found[0].length; j++) {
+				found[i][j] = false;
+			}
+		}
+		
+		int CENTER_INDEX = disallowedCoords.length / 2;
+		
+		Queue<Coord3D> queue = new LinkedList<Coord3D>();
+
+		//Start at -1 because I want it to take 0 new tiles to get to the neighbouring tile:
+		queue.add(new Coord3D(CENTER_INDEX + new_i, CENTER_INDEX + new_j, -1));
+		found[CENTER_INDEX + new_i][CENTER_INDEX + new_j] = true;
+		
+		while( ! queue.isEmpty()) {
+			
+			Coord3D cur = queue.remove();
+			
+			
+			for(int k=0; k<nudgeBasedOnRotation2D[0].length; k++) {
+				
+				int newI = cur.a +  nudgeBasedOnRotation2D[0][k];
+				int newJ = cur.b +  nudgeBasedOnRotation2D[1][k];
+				
+				
+				if(newI < 0 || newI >= disallowedCoords.length 
+						|| newJ < 0 || newJ >= disallowedCoords.length) {
+					continue;
+
+				} else if(
+						//TODO: combine  these into a super array?
+						! found[newI][newJ] 
+						&& ! disallowedCoords[newI][newJ]
+						&& ! coordsUsedInCurrentIsland[newI][newJ]) {
+					
+					found[newI][newJ] = true;
+
+
+					if(coordsUsedWithRotSymmetry[newI][newJ]) {
+						return true;
+					} else if(cur.c + 1 < maxNumTiles) {
+						queue.add(new Coord3D(newI, newJ, cur.c + 1));
+					}
+					
+					
+				}
+				
+			}
+			
+		}
+		
+		
+		return false;
+		
+	}
 }
+	

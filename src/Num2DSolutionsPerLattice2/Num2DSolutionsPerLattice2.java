@@ -73,8 +73,8 @@ public class Num2DSolutionsPerLattice2 {
 	
 	public static void firstFewNValuesTest() {
 
-		int MAX_N = 34;
-		int MIN_N = Math.min(MAX_N, MAX_N);
+		int MAX_N = 30;
+		int MIN_N = Math.min(0, MAX_N);
 		
 		long series[] = new long[MAX_N + 1];
 		
@@ -188,23 +188,13 @@ public class Num2DSolutionsPerLattice2 {
 				
 				int distances[][] = DistanceUtils.getDistancesFromGoal(disallowedCoords, goalCoord[0], goalCoord[1]);
 				
-				int squaresNeededToConnect2 = DistanceUtils.getMinNumSquaresToConnectAtStart2(lattice, distances, startI, startJ);
 				
 				//System.out.println("##squaresNeededToConnect: " + squaresNeededToConnect);
 				
 				//System.out.println("Using this startI and startJ coord: " + startI + ", " + startJ);
 				
-				//TODO: get rid of it soon:
-				//TODO: make sure getting rid of this condition means nothing becuase function will exit quickly...
-				if( n >= squaresNeededToConnect2) {
-					ret += countFor2DLattice(n, lattice, disallowedCoords, disallowedTransitions, startI, startJ,
-							squaresNeededToConnect2, distances);
-				//END TODO
-					
-				} else {
-					//System.out.println("Boosted!");
-				}
-	
+				ret += countFor2DLattice(n, lattice, disallowedCoords, disallowedTransitions, startI, startJ, distances);
+				
 				int coordsToDisallow[][] = null;
 				coordsToDisallow = lattice.getRotationallySymmetricPoints(tmpArray, startI, startJ);
 	
@@ -231,7 +221,7 @@ public class Num2DSolutionsPerLattice2 {
 	public static int MAX_NUM_SYMMETRIES_2D = 4;
 	
 	public static long countFor2DLattice(int targetWeight, RotationallySymmetric2DLatticeInterface lattice, boolean disallowedCoords[][], boolean disallowedTransitions[][][], int startI, int startJ,
-			int squaresNeededToConnect2, int distancesToGoal[][]) {
+			int distancesToGoal[][]) {
 		
 		int CENTER = disallowedCoords.length /2;
 		
@@ -249,7 +239,14 @@ public class Num2DSolutionsPerLattice2 {
 		}
 		
 		boolean coordsUsedWithRotSymmetry[][] = new boolean[disallowedCoords.length][disallowedCoords.length];
+		boolean coordsUsedInCurrentIsland[][] = new boolean[disallowedCoords.length][disallowedCoords.length];
 		
+		for(int i=0; i<coordsUsedWithRotSymmetry.length; i++) {
+			for(int j=0; j<coordsUsedWithRotSymmetry[0].length; j++) {
+				coordsUsedWithRotSymmetry[i][j] = false;
+				coordsUsedInCurrentIsland[i][j] = false;
+			}
+		}
 		
 		int currentWeight = lattice.getWeightOfPoint(startI, startJ);
 
@@ -260,6 +257,7 @@ public class Num2DSolutionsPerLattice2 {
 		for(int i=0; i<lattice.getWeightOfPoint(startI, startJ); i++) {
 			coordsUsedWithRotSymmetry[rotationallySymmetricPointsHolder[0][i] + CENTER]
 									 [rotationallySymmetricPointsHolder[1][i] + CENTER] = true;
+			
 		}
 		
 		if(targetWeight < currentWeight) {
@@ -301,13 +299,16 @@ public class Num2DSolutionsPerLattice2 {
 		int numCellsUsedDepth = 1;
 		squaresToDevelop[0] = new Coord2D(startI, startJ);
 		
+		coordsUsedInCurrentIsland[startI + CENTER]
+ 				[startJ + CENTER] = true;
 		
 		return doDepthFirstSearch(squaresToDevelop, numCellsUsedDepth,
 				debugNope, debugIterations,
 				squaresOrdering, minIndexToUse, minRotationToUse,
 				lattice, currentWeight, coordsUsedWithRotSymmetry, disallowedCoords, disallowedTransitions,
 				targetWeight, CENTER,
-				squaresNeededToConnect2, distancesToGoal);
+				Math.max(distancesToGoal[startI + CENTER][startJ + CENTER] - currentWeight/2, 0), distancesToGoal,
+				coordsUsedInCurrentIsland);
 	}
 	
 	//This is wildly inefficient.
@@ -385,7 +386,8 @@ public class Num2DSolutionsPerLattice2 {
 			int squaresOrdering[][], int minIndexToUse, int minRotationToUse,
 			RotationallySymmetric2DLatticeInterface lattice, int currentWeight, boolean coordsUsedWithRotSymmetry[][], boolean disallowedCoords[][], boolean disallowedTransitions[][][],
 			int targetWeight, int CENTER_ARRAY,
-			int squaresNeededToConnect2, int distancesToGoal[][]) {
+			int squaresNeededToConnect2, int distancesToGoal[][],
+			boolean coordsUsedInCurrentIsland[][]) {
 
 		
 		/*System.out.println("boom " + currentWeight);
@@ -400,26 +402,38 @@ public class Num2DSolutionsPerLattice2 {
 		
 		
 		//TODO: AHH! lattice.getWeightOfPoint(3, 3) is a hack...
-		// TODO: / 2 is a hack
-		if(squaresNeededToConnect2 > (targetWeight - currentWeight) / lattice.getWeightOfPoint(3, 3)) {
+		// TODO: Add constant for the "/ 2" is a hack
+		//Divide by 2 to go halfway around...
+		
+		int DEBUG_FIX_TODO_DELETE = 0;
+		
+		if(squaresNeededToConnect2 > (targetWeight - currentWeight) / 2) {
+			debugNope = true;
+		}
+		
+		if(squaresNeededToConnect2 - DEBUG_FIX_TODO_DELETE > (targetWeight - currentWeight) / 2) {
 			//System.out.println("SHORTCUT! " + lattice.getWeightOfPoint(3, 3));
 			return 0L;
 			//debugNope = true;
 		}
 		
+		
+		
 		if(currentWeight > targetWeight) {
 			return 0L;
 		} else if(currentWeight == targetWeight) {
 			
+			//TODO: get rid of isConnected soon.
 			if(isConnected(coordsUsedWithRotSymmetry, squaresToDevelop[0].a, squaresToDevelop[0].b, targetWeight, CENTER_ARRAY)
 				/*&& lattice.isSolutionAcceptableAndNotDoubleCounting(squaresToDevelop)*/) {
 
 				numSolutionsSoFarDebug++;
 				
 				if(debugNope) {
-					System.out.println("DEBUG");
+					System.out.println("DEBUG Nope");
 					Utils.printSquares(coordsUsedWithRotSymmetry);
-					System.out.println("DEBUG");
+					System.out.println("Lattice: " + lattice);
+					System.out.println("DEBUG Nope");
 					System.exit(1);
 				}
 
@@ -500,6 +514,8 @@ public class Num2DSolutionsPerLattice2 {
 					
 					tmpArray = lattice.getRotationallySymmetricPoints(tmpArray, new_i, new_j);
 					
+					coordsUsedInCurrentIsland[CENTER_ARRAY + new_i][CENTER_ARRAY + new_j] = true;
+					
 					int weightOfPoint = lattice.getWeightOfPoint(new_i, new_j);
 					for(int i=0; i<weightOfPoint; i++) {
 						coordsUsedWithRotSymmetry[CENTER_ARRAY + tmpArray[0][i]][CENTER_ARRAY + tmpArray[1][i]] = true;
@@ -515,25 +531,67 @@ public class Num2DSolutionsPerLattice2 {
 					
 					//distancesToGoal
 					//TODO: I think this could be improved...
-					boolean newCellCloserToGoal = distancesToGoal[CENTER_ARRAY + new_i][CENTER_ARRAY + new_j] <
-							distancesToGoal[CENTER_ARRAY + squaresToDevelop[curOrderedIndexToUse].a]
-									[CENTER_ARRAY + squaresToDevelop[curOrderedIndexToUse].b];
+					boolean newCellCloserToGoal = 
+							squaresNeededToConnect2 > 0
+							&&  distancesToGoal[CENTER_ARRAY + new_i][CENTER_ARRAY + new_j] <
+							    distancesToGoal[CENTER_ARRAY + squaresToDevelop[curOrderedIndexToUse].a]
+									[CENTER_ARRAY + squaresToDevelop[curOrderedIndexToUse].b]
+							//&& DistanceUtils.couldGetToOtherIslandInWithNnewTiles(coordsUsedWithRotSymmetry, disallowedCoords, new_i, new_j, coordsUsedInCurrentIsland, squaresNeededToConnect2 - 1)
+					
+					;
+					boolean debugNopeNextIter = false;
+					
 					//If newCellCloserToGoal, maybe do a BFS to see if it's actually closer?
 					//TODO: when BFS, avoid 'tried' cells. (Cell that can't be used...)
 					
 					if(newCellCloserToGoal) {
-						squaresNeededToConnect2--;
+						if( ! DistanceUtils.couldGetToOtherIslandInWithNnewTiles(coordsUsedWithRotSymmetry, disallowedCoords, new_i, new_j, coordsUsedInCurrentIsland, squaresNeededToConnect2 - 1)) {
+							//debugNopeNextIter = true;
+							
+							/*System.out.println("Debug");
+							for(int d=0; d<debugIterations.length; d++) {
+								System.out.println(debugIterations[d]);
+							}
+							System.out.println("(END DEBUG)");*/
+						}
+						
+						if(debugIterations[1] == 107 && debugIterations[2]==108 && debugIterations[3] == 113) {
+							System.out.println("TIME TO DEBUG!");
+							
+							System.out.println("Function call:");
+							Utils.printSquares(coordsUsedWithRotSymmetry);
+							System.out.println("AND:");
+							Utils.printSquares(coordsUsedInCurrentIsland);
+							System.out.println("...");
+							
+							for(int i2=0; i2<distancesToGoal.length; i2++) {
+								for(int j2=0; j2<distancesToGoal[0].length; j2++) {
+									
+									if(distancesToGoal[i2][j2] < 10) {
+										System.out.print(" ");
+									}
+									System.out.print(" " + distancesToGoal[i2][j2]);
+									
+								}
+								System.out.println();
+							}
+							DistanceUtils.couldGetToOtherIslandInWithNnewTiles(coordsUsedWithRotSymmetry, disallowedCoords, new_i, new_j, coordsUsedInCurrentIsland, squaresNeededToConnect2 - 1);
+							
+						}
+						squaresNeededToConnect2 -= weightOfPoint/2;
+						
 					}
-					
 				
 					retDuplicateSolutions += doDepthFirstSearch(squaresToDevelop, numCellsUsedDepth,
-							debugNope, debugIterations,
+							debugNope || debugNopeNextIter, debugIterations,
 							squaresOrdering, curOrderedIndexToUse, dirNewCellAdd,
 							lattice, currentWeight, coordsUsedWithRotSymmetry, disallowedCoords, disallowedTransitions,
 							targetWeight, CENTER_ARRAY,
-							squaresNeededToConnect2, distancesToGoal
+							squaresNeededToConnect2, distancesToGoal,
+							coordsUsedInCurrentIsland
 						);
 					
+					debugNopeNextIter = false;
 					
 					if(newCellCloserToGoal) {
 						squaresNeededToConnect2++;
@@ -545,6 +603,8 @@ public class Num2DSolutionsPerLattice2 {
 					//Tear down (undo add of new cell)
 					squaresToDevelop[numCellsUsedDepth] = null;
 					
+					coordsUsedInCurrentIsland[CENTER_ARRAY + new_i][CENTER_ARRAY + new_j] = false;
+
 					tmpArray = lattice.getRotationallySymmetricPoints(tmpArray, new_i, new_j);
 					
 					for(int i=0; i<weightOfPoint; i++) {

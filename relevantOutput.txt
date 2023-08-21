@@ -1,0 +1,51 @@
+
+	/* Debug N=16
+	 * Sanity check results:
+	 * Debugging 2D rotations:
+Number of rotations by type:
+Type 0: 2685
+Type 1: 13520
+Type 2: 472
+Type 3: 19
+Type 4: 10
+
+Lattice2 results:
+Solutions for (Half with axis at top left of 00): 2685
+Solutions for (Half with axis at left of 00): 6760  (x2 because this doesn't also count top of 00)
+Solutions for (Half with axis at mid of 00): 472
+Solutions for (Quarter with axis at top-left of 00): 19
+Solutions for (Quarter with axis at mid of 00): 9
+
+Looks like I missed 1 for Quarter with axis at mid of 00...
+	 */
+
+	//As of Aug 20th:
+	// The program solved from N=0 to 31 (inclusive)
+	/*
+	 * Numbers for N = 30
+Num fixed polycubes: 18946775782611174
+Solutions for (Half with axis at top left of 00): 36246300
+Solutions for (Half with axis at left of 00): 89828072
+Solutions for (Half with axis at mid of 00): 8065830
+Solutions for (Quarter with axis at top-left of 00): 0
+Solutions for (Quarter with axis at mid of 00): 0
+
+	 * Numbers for N = 31
+Num fixed polycubes: 74541651404935148
+Solutions for (Half with axis at top left of 00): 0
+Solutions for (Half with axis at left of 00): 0
+Solutions for (Half with axis at mid of 00): 223859532
+Solutions for (Quarter with axis at top-left of 00): 0
+Solutions for (Quarter with axis at mid of 00): 0
+	 */
+	
+	/*
+	 * Numbers for N = 33
+Num fixed polycubes: 1157186142148293638
+Solutions for (Half with axis at top left of 00): 0
+Solutions for (Half with axis at left of 00): 0
+Solutions for (Half with axis at mid of 00): 879285686
+Solutions for (Quarter with axis at top-left of 00): 0
+Solutions for (Quarter with axis at mid of 00): 2308
+Answer for weight 33: 289296535756895985
+	 */
