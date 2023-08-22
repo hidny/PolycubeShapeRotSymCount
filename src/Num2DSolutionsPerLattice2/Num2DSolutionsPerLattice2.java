@@ -73,7 +73,7 @@ public class Num2DSolutionsPerLattice2 {
 	
 	public static void firstFewNValuesTest() {
 
-		int MAX_N = 30;
+		int MAX_N = 20;
 		int MIN_N = Math.min(0, MAX_N);
 		
 		long series[] = new long[MAX_N + 1];
@@ -206,8 +206,6 @@ public class Num2DSolutionsPerLattice2 {
 			startJ = coord[1];
 			
 			
-
-			
 		}
 		
 		return ret;
@@ -262,8 +260,7 @@ public class Num2DSolutionsPerLattice2 {
 			}
 			
 		}
-		
-		//TODO: Start recursion HERE
+
 		Coord2D squaresToDevelop[] = new Coord2D[targetWeight + 1];
 		boolean debugNope = false;
 		long debugIterations[] = new long[targetWeight + 1];
@@ -323,6 +320,7 @@ public class Num2DSolutionsPerLattice2 {
 
 		// TODO: Add constant for the "/ 2" is a hack
 		//Divide by 2 to go halfway around...
+		//It should be div 4 if it's a 4 way symmetry
 		
 		
 		// TODO: make it /4 for quarterAxis in future.
@@ -409,7 +407,7 @@ public class Num2DSolutionsPerLattice2 {
 				boolean cantAddCellBecauseOfOtherNeighbours = cantAddCellBecauseOfOtherNeighbours(
 						squaresToDevelop, coordsUsedWithRotSymmetry, numCellsUsedDepth,
 						debugNope, debugIterations,
-						squaresOrdering, curOrderedIndexToUse, dirNewCellAdd,
+						squaresOrdering, curOrderedIndexToUse,
 						new_i, new_j,
 						CENTER_ARRAY
 					);
@@ -487,31 +485,26 @@ public class Num2DSolutionsPerLattice2 {
 	}
 	
 	
+	public static final int NUDGES[][] = new int[][]{{-1, 0, 1, 0},
+												    {0, 1, 0, -1}};
+	
+	
 	//I'm enforcing an artificial constraint where the polycube shape
 		// has to develop in the same order as a breath-first-search.
 		// This has a lot of advantages that I will need to explain in some docs.
 		public static boolean cantAddCellBecauseOfOtherNeighbours(Coord2D squaresToDevelop[], boolean squaresUsed[][], int numCellsUsedDepth,
 				boolean debugNope, long debugIterations[],
 				
-				//TODO: will minRotaitonToUse even be a thing?
-				int squaresOrdering[][], int curOrderedIndexToUse, int minRotationToUse,
+				int squaresOrdering[][], int curOrderedIndexToUse,
 				int new_i, int new_j,
 				int CENTER_ARRAY) {
 
 			boolean cantAddCellBecauseOfOtherNeighbours = false;
 			
-			//TODO: just record the nudges next time:
-			int neighboursBasedOnRotation[][] = {{new_i-1,   new_j},
-												 {new_i,   new_j+1},
-												 {new_i+1,   new_j},
-												 {new_i, new_j - 1}
-												 };
-			
-			
-			for(int rotReq=0; rotReq<neighboursBasedOnRotation.length; rotReq++) {
+			for(int rotReq=0; rotReq<NUDGES[0].length; rotReq++) {
 				
-				int i1 = neighboursBasedOnRotation[rotReq][0];
-				int j1 = neighboursBasedOnRotation[rotReq][1];
+				int i1 = new_i + NUDGES[0][rotReq];
+				int j1 = new_j + NUDGES[1][rotReq];
 			
 				if(squaresToDevelop[curOrderedIndexToUse].a == i1 
 					&& squaresToDevelop[curOrderedIndexToUse].b == j1) {
@@ -519,10 +512,8 @@ public class Num2DSolutionsPerLattice2 {
 					continue;
 				}
 				
-				//System.out.println("Cube neighbour:" + i1 + ", " + j1 + ", " + k1);
 				
 				if(squaresUsed[CENTER_ARRAY + i1][CENTER_ARRAY + j1]) {
-					//System.out.println("Connected to another paper");
 					
 					int orderOtherCell = squaresOrdering[CENTER_ARRAY + i1][CENTER_ARRAY + j1];
 			
