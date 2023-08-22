@@ -84,6 +84,7 @@ Solutions for (Half with axis at mid of 00): 8065830
 Solutions for (Quarter with axis at top-left of 00): 0
 Solutions for (Quarter with axis at mid of 00): 0
 
+As Of Aug 21st: 1 hour:
 	 * Numbers for N = 31
 Num fixed polycubes: 74541651404935148
 Solutions for (Half with axis at top left of 00): 0
@@ -92,6 +93,16 @@ Solutions for (Half with axis at mid of 00): 223859532
 Solutions for (Quarter with axis at top-left of 00): 0
 Solutions for (Quarter with axis at mid of 00): 0
 	 */
+	 
+As of Aug 21st: 6 hours
+Numbers for N = 32
+Num fixed polycubes: 293560133910477776
+Solutions for (Half with axis at top left of 00): 142671941
+Solutions for (Half with axis at left of 00): 353006402
+Solutions for (Half with axis at mid of 00): 32251819
+Solutions for (Quarter with axis at top-left of 00): 2851
+Solutions for (Quarter with axis at mid of 00): 1699
+Answer for weight 32: 73390033697855860
 	
 	/*
 	 * Numbers for N = 33
@@ -103,3 +114,35 @@ Solutions for (Quarter with axis at top-left of 00): 0
 Solutions for (Quarter with axis at mid of 00): 2308
 Answer for weight 33: 289296535756895985
 	 */
+	 
+
+Took under 19 hours:
+Numbers for N = 34
+Num fixed polycubes: 4565553929115769162
+Solutions for (Half with axis at top left of 00): 562600898
+Solutions for (Half with axis at left of 00): 1389925354
+Solutions for (Half with axis at mid of 00): 128955260
+Solutions for (Quarter with axis at top-left of 00): 0
+Solutions for (Quarter with axis at mid of 00): 0
+Answer for weight 34: 1141388483146794007
+
+
+Aug 21st N=35
+By deduction, there's 6920849692 solutions to Half with axis at mid of 00, and 0 for all others. Found this After 17 hours.
+
+Manual check: (18027932215016128134 + 3460424846 ) / 4 = 4506983054619138245 
+
+I had to /2 because I double counted every solution in the debug logs... oops
+
+Later:
+Numbers for N = 35
+Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: 35
+	at Num2DSolutionsPerLattice2.Num2DSolutionsPerLattice2.solveForN(Num2DSolutionsPerLattice2.java:143)
+	at Num2DSolutionsPerLattice2.Num2DSolutionsPerLattice2.firstFewNValuesTest(Num2DSolutionsPerLattice2.java:84)
+	at Num2DSolutionsPerLattice2.Num2DSolutionsPerLattice2.main(Num2DSolutionsPerLattice2.java:39)
+	
+(I didn't record N=35 because it didn't fit within a 64 bit int.)
+(took 21 hours)
+----
+
+

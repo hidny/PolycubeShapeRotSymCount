@@ -73,8 +73,8 @@ public class Num2DSolutionsPerLattice2 {
 	
 	public static void firstFewNValuesTest() {
 
-		int MAX_N = 32;
-		int MIN_N = Math.min(MAX_N, MAX_N);
+		int MAX_N = 16;
+		int MIN_N = Math.min(0, MAX_N);
 		
 		long series[] = new long[MAX_N + 1];
 		
@@ -359,7 +359,6 @@ public class Num2DSolutionsPerLattice2 {
 			return false;
 			
 		} else if(numFound == weight) {
-			numSolutionsSoFarDebug++;
 			return true;
 
 		} else {
@@ -404,9 +403,16 @@ public class Num2DSolutionsPerLattice2 {
 			return 0L;
 		} else if(currentWeight == targetWeight) {
 			
-			//TODO: get rid of isConnected soon.
-			if(isConnected(coordsUsedWithRotSymmetry, squaresToDevelop[0].a, squaresToDevelop[0].b, targetWeight, CENTER_ARRAY) ) {
+			//TODO: get rid of isConnected soon. !!!
+			//It seems like I can't get rid of it for some reason :(
+			//There's probable a bug?
+			if(//squaresNeededToConnect2 <= 0 || 
+					//(! lattice.toString().toLowerCase().contains("half")
+					//&& 
+					isConnected(coordsUsedWithRotSymmetry, squaresToDevelop[0].a, squaresToDevelop[0].b, targetWeight, CENTER_ARRAY)
+				) {
 
+			//if(squaresNeededToConnect2 <= 0) {
 				numSolutionsSoFarDebug++;
 				
 				if(debugNope) {
