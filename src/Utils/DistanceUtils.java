@@ -9,10 +9,6 @@ import PartOfRotSymmetric2DLattice.RotationallySymmetric2DLatticeInterface;
 //TODO: this is not complete and not tested!
 public class DistanceUtils {
 
-	public static int getManhantanDist(int i1, int i2, int j1, int j2) {
-		return Math.abs(i1 - i2) + Math.abs(j1 - j2);
-	}
-
 
 	public static final int nudgeBasedOnRotation2D[][] =
 		{{-1, 0,  1,  0},
@@ -82,14 +78,19 @@ public class DistanceUtils {
 
 	public static int[] getGoalCoord(RotationallySymmetric2DLatticeInterface lattice, boolean disallowedCoords[][], int startI, int startJ) {
 			
+			int CENTER_INDEX = disallowedCoords.length / 2;
+		
 			int startPoints[][] = lattice.getRotationallySymmetricPoints(new int[2][4], startI, startJ);
 			int weight = lattice.getWeightOfPoint(startI, startJ);
 			
 			int currentFurthestDist = 0;
 			int currentFurthestIndex = 0;
 			
+
+			int distancesTmp[][] = DistanceUtils.getDistancesFromGoal(disallowedCoords, startI, startJ);
+			
 			for(int k=0; k<weight; k++) {
-				int dist = getManhantanDist(startI, startPoints[0][k], startJ, startPoints[1][k]);
+				int dist = distancesTmp[CENTER_INDEX + startPoints[0][k]][CENTER_INDEX + startPoints[1][k]];
 				
 				
 				if(dist > 0) {
